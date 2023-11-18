@@ -1,9 +1,13 @@
 use crate::pb::eth::transaction::v1::{Transaction, Transactions};
+use crate::abi;
 use crate::util;
 use anyhow::anyhow;
+use hex_literal::hex;
 use serde::Deserialize;
-use substreams::Hex;
-use substreams_ethereum::pb::eth::v2::{Block, TransactionTrace, TransactionTraceStatus};
+use ethabi;
+use substreams::{log, Hex};
+use substreams_ethereum::block_view::CallView;
+use substreams_ethereum::pb::eth::v2::{Block, TransactionTrace};
 
 #[derive(Deserialize)]
 struct TransactionFilterParams {
@@ -11,15 +15,12 @@ struct TransactionFilterParams {
     from: Option<String>,
 }
 
-// Entrypoint Contract
-// const TRACKED_CONTRACT: [u8; 20] = hex!("5ff137d4b0fdcd49dca30c7cf57e578a026d2789");
-
 #[substreams::handlers::map]
 fn map_filter_transactions(params: String, blk: Block) -> Result<Transactions, Vec<substreams::errors::Error>> {
     let filters = parse_filters_from_params(params)?;
 
     let transactions: Vec<Transaction> = blk
-        .transactions()
+        .transaction_traces.iter()
         .filter(|trans| apply_filter(&trans, &filters))
         .map(|trans| Transaction {
             from: Hex::encode(&trans.from),
@@ -34,7 +35,7 @@ fn map_filter_transactions(params: String, blk: Block) -> Result<Transactions, V
 fn parse_filters_from_params(params: String) -> Result<TransactionFilterParams, Vec<substreams::errors::Error>> {
     let parsed_result = serde_qs::from_str(&params);
     if parsed_result.is_err() {
-        return Err(Vec::from([anyhow!("Unpexcted error while parsing parameters")]));
+        return Err(Vec::from([anyhow!("Unexpected error while parsing parameters")]));
     }
 
     let filters = parsed_result.unwrap();
@@ -72,11 +73,16 @@ fn verify_filters(params: &TransactionFilterParams) -> Result<(), Vec<substreams
 fn apply_filter(transaction: &TransactionTrace, filters: &TransactionFilterParams) -> bool {
     if !filter_by_parameter(&filters.from, &transaction.from)
         || !filter_by_parameter(&filters.to, &transaction.to)
-        || transaction.status != (TransactionTraceStatus::Succeeded as i32)
     {
         return false;
     }
-    true
+
+    return transaction.calls().any(|call| call_signature_filter(&call))
+}
+
+fn call_signature_filter(call: &CallView) -> bool {
+    // use abi::entrypoint::functions::HandleOps;
+    return call.call.input.starts_with(&hex!("1fad948c"))
 }
 
 fn filter_by_parameter(parameter: &Option<String>, transaction_field: &Vec<u8>) -> bool {
