@@ -1,14 +1,17 @@
 specVersion: v0.1.0
 package:
-  name: "substreams_template"
+  name: "nazar_substreams"
   version: v0.1.0
 
-imports:
-  database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v1.2.1/substreams-database-change-v1.2.1.spkg
+# imports:
+#   database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v1.2.1/substreams-database-change-v1.2.1.spkg
+
+network: mainnet
 
 protobuf:
   files:
-    - erc721.proto
+    - block_meta.proto
+    - transaction.proto
   importPaths:
     - ./proto
 
@@ -18,31 +21,42 @@ binaries:
     file: ./target/wasm32-unknown-unknown/release/substreams.wasm
 
 modules:
-  - name: map_transfers
+  - name: map_block
     kind: map
-    initialBlock: 12287507
+    initialBlock: 18597208
     inputs:
       - source: sf.ethereum.type.v2.Block
     output:
-      type: proto:eth.erc721.v1.Transfers
+      type: proto:eth.block_meta.v1.BlockMeta
 
-  - name: store_transfers
-    kind: store
-    initialBlock: 12287507
-    updatePolicy: add
-    valueType: int64
-    inputs:
-      - map: map_transfers
-
-  - name: db_out
+  - name: map_filter_transactions
     kind: map
-    initialBlock: 12287507
+    initialBlock: 18597208
     inputs:
-      - source: sf.substreams.v1.Clock
-      - map: map_transfers
-      - store: store_transfers
-        mode: deltas
+      - params: string
+      - source: sf.ethereum.type.v2.Block
     output:
-      type: proto:sf.substreams.sink.database.v1.DatabaseChanges
+      type: proto:eth.transaction.v1.Transactions
 
-network: mainnet
+  # - name: store_transfers
+  #   kind: store
+  #   initialBlock: 12287507
+  #   updatePolicy: add
+  #   valueType: int64
+  #   inputs:
+  #     - map: map_transfers
+
+  # - name: db_out
+  #   kind: map
+  #   initialBlock: 12287507
+  #   inputs:
+  #     - source: sf.substreams.v1.Clock
+  #     - map: map_transfers
+  #     - store: store_transfers
+  #       mode: deltas
+  #   output:
+  #     type: proto:sf.substreams.sink.database.v1.DatabaseChanges
+
+params:
+  # Filtering transactions to Entrypoint contract address
+  map_filter_transactions: "to=0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789"
