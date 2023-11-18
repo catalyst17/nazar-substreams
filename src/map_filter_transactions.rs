@@ -16,6 +16,7 @@ struct TransactionFilterParams {
 #[substreams::handlers::map]
 fn map_filter_transactions(params: String, blk: Block) -> Result<Transactions, Vec<substreams::errors::Error>> {
     let filters = parse_filters_from_params(params)?;
+    let header = blk.header.unwrap();
 
     let transactions: Vec<Transaction> = blk
         .transaction_traces.iter()
@@ -24,8 +25,10 @@ fn map_filter_transactions(params: String, blk: Block) -> Result<Transactions, V
             from: Hex::encode(&trans.from),
             to: Hex::encode(&trans.to),
             hash: Hex::encode(&trans.hash),
-            chain: "Ethereum Mainnet".to_owned(),
-            account_abstraction_type: "erc4337".to_owned()
+            chain: "ethereum".to_owned(),
+            account_abstraction_type: "erc4337".to_owned(),
+            status: trans.status().as_str_name().to_owned(),
+            timestamp: Some(header.timestamp.as_ref().unwrap().clone())
         })
         .collect();
 

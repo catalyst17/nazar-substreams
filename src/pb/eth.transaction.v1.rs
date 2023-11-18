@@ -18,5 +18,9 @@ pub struct Transaction {
     pub chain: ::prost::alloc::string::String,
     #[prost(string, tag="5")]
     pub account_abstraction_type: ::prost::alloc::string::String,
+    #[prost(string, tag="6")]
+    pub status: ::prost::alloc::string::String,
+    #[prost(message, optional, tag="7")]
+    pub timestamp: ::core::option::Option<::prost_types::Timestamp>,
 }
 // @@protoc_insertion_point(module)

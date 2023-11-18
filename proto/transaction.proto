@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package eth.transaction.v1;
 
+import "google/protobuf/timestamp.proto";
+
 message Transactions {
   repeated Transaction transactions = 1;
 }
@@ -12,4 +14,6 @@ message Transaction {
   string hash = 3;
   string chain = 4;
   string account_abstraction_type = 5;
+  string status = 6;
+  google.protobuf.Timestamp timestamp = 7;
 }

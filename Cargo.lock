@@ -92,6 +92,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chrono"
+version = "0.4.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "crunchy"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -361,11 +370,13 @@ name = "nazar_substreams"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "ethabi",
  "getrandom",
  "hex-literal",
  "num-bigint",
  "prost",
+ "prost-types",
  "serde",
  "serde_qs",
  "substreams",
