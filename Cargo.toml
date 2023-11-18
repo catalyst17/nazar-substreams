@@ -1,9 +1,9 @@
 [package]
-name = "substreams-template"
+name = "nazar_substreams"
 version = "0.1.0"
-description = "Substream template demo project"
+description = "Substreams for Nazar"
 edition = "2021"
-repository = "https://github.com/streamingfast/substreams-template"
+repository = "https://github.com/catalyst17/nazar-substreams"
 license = "Apache 2.0"
 
 [lib]
@@ -16,12 +16,14 @@ ethabi = "17"
 hex-literal = "0.3"
 num-bigint = "0.4"
 prost = "0.11"
+serde_qs = "0.12.0"
+serde = { version = "1.0", features = ["derive"] }
 # Use latest from https://crates.io/crates/substreams
 substreams = "0.5"
-# Use latest from https://crates.io/crates/substreams-database-change
-substreams-database-change = "1.2"
 # Use latest from https://crates.io/crates/substreams-ethereum
 substreams-ethereum = "0.9"
+# Use latest from https://crates.io/crates/substreams-database-change
+substreams-database-change = "1.3"
 
 # Required so that ethabi > ethereum-types build correctly under wasm32-unknown-unknown
 [target.wasm32-unknown-unknown.dependencies]
