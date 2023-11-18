@@ -9,7 +9,7 @@ fn db_out(
     let mut database_changes: DatabaseChanges = Default::default();
 
     for trx in trxs.transactions {
-        push_create(&mut database_changes, &trx.hash, 0);
+        push_create(&mut database_changes, &trx.hash, 0, &trx.chain, &trx.account_abstraction_type);
     }
 
     Ok(database_changes)
@@ -19,8 +19,12 @@ fn db_out(
 fn push_create(
     changes: &mut DatabaseChanges,
     key: &str,
-    ordinal: u64
+    ordinal: u64,
+    chain: &str,
+    aa_type: &str,
 ) {
     changes
-        .push_change("transactions", key, ordinal, Operation::Create);
+        .push_change("transactions", key, ordinal, Operation::Create)
+        .change("chain", (None, chain))
+        .change("aaType", (None, aa_type));
 }

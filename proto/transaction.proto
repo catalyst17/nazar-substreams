@@ -10,4 +10,6 @@ message Transaction {
   string from = 1;
   string to = 2;
   string hash = 3;
+  string chain = 4;
+  string account_abstraction_type = 5;
 }

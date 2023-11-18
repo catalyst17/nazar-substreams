@@ -14,5 +14,9 @@ pub struct Transaction {
     pub to: ::prost::alloc::string::String,
     #[prost(string, tag="3")]
     pub hash: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub chain: ::prost::alloc::string::String,
+    #[prost(string, tag="5")]
+    pub account_abstraction_type: ::prost::alloc::string::String,
 }
 // @@protoc_insertion_point(module)

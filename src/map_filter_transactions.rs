@@ -24,6 +24,8 @@ fn map_filter_transactions(params: String, blk: Block) -> Result<Transactions, V
             from: Hex::encode(&trans.from),
             to: Hex::encode(&trans.to),
             hash: Hex::encode(&trans.hash),
+            chain: "Ethereum Mainnet".to_owned(),
+            account_abstraction_type: "erc4337".to_owned()
         })
         .collect();
 
