@@ -2,9 +2,7 @@ use crate::pb::eth::transaction::v1::{Transaction, Transactions};
 use crate::abi;
 use crate::util;
 use anyhow::anyhow;
-use hex_literal::hex;
 use serde::Deserialize;
-use ethabi;
 use substreams::{log, Hex};
 use substreams_ethereum::block_view::CallView;
 use substreams_ethereum::pb::eth::v2::{Block, TransactionTrace};
@@ -81,8 +79,15 @@ fn apply_filter(transaction: &TransactionTrace, filters: &TransactionFilterParam
 }
 
 fn call_signature_filter(call: &CallView) -> bool {
-    // use abi::entrypoint::functions::HandleOps;
-    return call.call.input.starts_with(&hex!("1fad948c"))
+    match abi::entrypoint::functions::HandleOps::decode(&call.call) {
+        Ok(decoded) => {
+            log::info!("handleOps found, with beneficiary address: {}", Hex ::encode(decoded.beneficiary));
+            return true;
+        }
+        Err(_e) => {
+            return false;
+        }
+    }
 }
 
 fn filter_by_parameter(parameter: &Option<String>, transaction_field: &Vec<u8>) -> bool {
