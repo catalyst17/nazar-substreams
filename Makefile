@@ -20,7 +20,7 @@ setup-sink:
 
 .PHONY: sink
 sink: build
-	substreams-sink-sql run "psql://$(SINK_DB_NAME):$(SINK_DB_PASS)@$(SINK_DB_URL)?sslmode=disable" ./sink/substreams.dev.yaml
+	substreams-sink-sql run "psql://$(SINK_DB_NAME):$(SINK_DB_PASS)@$(SINK_DB_URL)?sslmode=disable" ./sink/substreams.dev.yaml --on-module-hash-mistmatch=warn
 
 .PHONY: gui
 gui: build
