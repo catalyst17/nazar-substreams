@@ -90,7 +90,9 @@ fn filter_and_get_aa_type(transaction: &TransactionTrace, filters: &TransactionF
                 // shouldn't actually happen
                 pass = transaction.calls().any(|call| call_signature_filter(&call))
             } else if account_abstraction_type.as_ref().unwrap().eq("safe") {
-                pass =  transaction.receipt().logs().any(|log| event_data_filter(&log, &hex_transaction_to) )
+                if transaction_input_filter(&transaction) {
+                    pass = transaction.receipt().logs().any(|log| event_data_filter(&log, &hex_transaction_to) )
+                }
             }
         }
     }
@@ -105,6 +107,19 @@ fn call_signature_filter(call: &CallView) -> bool {
     match abi::entrypoint::functions::HandleOps::decode(&call.call) {
         Ok(decoded) => {
             log::info!("handleOps found, with beneficiary address: {}", Hex ::encode(decoded.beneficiary));
+            return true;
+        }
+        Err(_e) => {
+            return false;
+        }
+    }
+}
+
+fn transaction_input_filter(transaction: &TransactionTrace) -> bool {
+    let call = &transaction.calls[0];
+    match abi::safe_v1_3_0::functions::ExecTransaction::decode(call) {
+        Ok(decoded) => {
+            log::info!("ExecTransaction found, with target address: {}", Hex ::encode(decoded.to));
             return true;
         }
         Err(_e) => {
