@@ -23,7 +23,7 @@ binaries:
 modules:
   - name: map_block
     kind: map
-    initialBlock: 18597208
+    initialBlock: 18529863
     inputs:
       - source: sf.ethereum.type.v2.Block
     output:
@@ -31,16 +31,15 @@ modules:
 
   - name: map_filter_transactions
     kind: map
-    initialBlock: 18597208
+    initialBlock: 18529863
     inputs:
-      - params: string
       - source: sf.ethereum.type.v2.Block
     output:
       type: proto:eth.transaction.v1.Transactions
 
   - name: db_out
     kind: map
-    initialBlock: 18597208
+    initialBlock: 18529863
     inputs:
       - map: map_filter_transactions
     output:
@@ -57,8 +56,3 @@ sink:
       enabled: true
     pgweb_frontend:
       enabled: true
-
-params:
-  # Filtering transactions to Entrypoint contract address
-  map_filter_transactions: "to=0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789"
-  # map_filter_by_main_call: "handleOps()"
