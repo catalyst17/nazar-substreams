@@ -22,7 +22,7 @@ fn map_filter_transactions(blk: Block) -> Result<Transactions, Vec<substreams::e
     let transactions: Vec<Transaction> = blk
         .transaction_traces.iter()
         .filter_map(|trans| {
-            let aa_trans_type = apply_filter(&trans, &filters);
+            let aa_trans_type = filter_and_get_aa_type(&trans, &filters);
             if aa_trans_type.is_some() {
                 Some(Transaction {
                     from: Hex::encode(&trans.from),
@@ -66,7 +66,7 @@ fn compose_filters() -> TransactionFilters {
     return filters;
 }
 
-fn apply_filter(transaction: &TransactionTrace, filters: &TransactionFilters) -> Option<String> {
+fn filter_and_get_aa_type(transaction: &TransactionTrace, filters: &TransactionFilters) -> Option<String> {
     let hex_transaction_to = format!("0x{}", Hex::encode(&transaction.to));
     let mut pass = false;
     let mut account_abstraction_type: Option<String> = None;
