@@ -10,7 +10,6 @@ network: mainnet
 
 protobuf:
   files:
-    - block_meta.proto
     - transaction.proto
   importPaths:
     - ./proto
@@ -21,14 +20,6 @@ binaries:
     file: ./target/wasm32-unknown-unknown/release/substreams.wasm
 
 modules:
-  - name: map_block
-    kind: map
-    initialBlock: 18529863
-    inputs:
-      - source: sf.ethereum.type.v2.Block
-    output:
-      type: proto:eth.block_meta.v1.BlockMeta
-
   - name: map_filter_transactions
     kind: map
     initialBlock: 18529863
